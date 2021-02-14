@@ -17,11 +17,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     // déclaration de l'objet définissant la boucle principale de déplacement et de rendu
     private GameLoopThread gameLoopThread;
     public static LoadImageTask[] task = new LoadImageTask[10]; //load img threads des persos
-    public static LoadImageTask[] taskPlate = new LoadImageTask[4]; //load img threads des Platforms
-    public static LoadImageTask[] taskFoe = new LoadImageTask[4]; //load img threads des Ennemies
+    public static LoadImageTask[] taskPlate = new LoadImageTask[5]; //load img threads des Platforms
+    public static LoadImageTask[] taskFoe = new LoadImageTask[5]; //load img threads des Ennemies
     public BackGround backGround;
     public Character chr;
-    public int origin;
     public static int currentX, currentY;
     public static int framegravity = 0; //frame pour la gravité
     public static int framejump = 0; //frame pour le saut chr

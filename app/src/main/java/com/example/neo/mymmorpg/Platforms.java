@@ -15,7 +15,7 @@ import static com.example.neo.mymmorpg.MainActivity.height;
 import static com.example.neo.mymmorpg.MainActivity.width;
 
 class Platforms {
-    private BitmapDrawable[] sprite = new BitmapDrawable[8];
+    private BitmapDrawable[] sprite = new BitmapDrawable[10];
     private double x, y;
     private int plW, plH;
     private double type;
@@ -105,53 +105,77 @@ class Platforms {
     }
 
     void draw(Canvas canvas) {
-        for (int i=0; i<8; i++) {
+        for (int i = 0; i < 10; i++) {
             if (sprite[i] == null)
-                sprite[i] = taskPlate[i/2].getBitmapDrawable()[i&1];
+                sprite[i] = taskPlate[i / 2].getBitmapDrawable()[i & 1];
         }
         //dessine
-        frameToDraw.set(0, 0, plW*10, plH);
-        whereToDraw.set((float)x, (float)y, (float)x + plW, (float)y + plH);
+        frameToDraw.set(0, 0, plW * 10, plH);
+        whereToDraw.set((float) x, (float) y, (float) x + plW, (float) y + plH);
 
         //groud1
         if (type == 0) {
-            if(!isLeft) {
-                if(sprite[0] == null) {return;}
+            if (!isLeft) {
+                if (sprite[0] == null) {
+                    return;
+                }
                 canvas.drawBitmap(sprite[0].getBitmap(), frameToDraw, whereToDraw, null);
-            }
-            else {
-                if(sprite[1] == null) {return;}
+            } else {
+                if (sprite[1] == null) {
+                    return;
+                }
                 canvas.drawBitmap(sprite[1].getBitmap(), frameToDraw, whereToDraw, null);
             }
             //ground2
         } else if (type == 1) {
-            if(!isLeft) {
-                if(sprite[2] == null) {return;}
+            if (!isLeft) {
+                if (sprite[2] == null) {
+                    return;
+                }
                 canvas.drawBitmap(sprite[2].getBitmap(), frameToDraw, whereToDraw, null);
-            }
-            else {
-                if(sprite[3] == null) {return;}
+            } else {
+                if (sprite[3] == null) {
+                    return;
+                }
                 canvas.drawBitmap(sprite[3].getBitmap(), frameToDraw, whereToDraw, null);
             }
             //ground3
         } else if (type == 2) {
-            if(!isLeft) {
-                if(sprite[4] == null) {return;}
+            if (!isLeft) {
+                if (sprite[4] == null) {
+                    return;
+                }
                 canvas.drawBitmap(sprite[4].getBitmap(), frameToDraw, whereToDraw, null);
-            }
-            else {
-                if(sprite[5] == null) {return;}
+            } else {
+                if (sprite[5] == null) {
+                    return;
+                }
                 canvas.drawBitmap(sprite[5].getBitmap(), frameToDraw, whereToDraw, null);
             }
             //platform1
         } else if (type == 3) {
-            if(!isLeft) {
-                if(sprite[6] == null) {return;}
+            if (!isLeft) {
+                if (sprite[6] == null) {
+                    return;
+                }
                 canvas.drawBitmap(sprite[6].getBitmap(), frameToDraw, whereToDraw, null);
-            }
-            else {
-                if(sprite[7] == null) {return;}
+            } else {
+                if (sprite[7] == null) {
+                    return;
+                }
                 canvas.drawBitmap(sprite[7].getBitmap(), frameToDraw, whereToDraw, null);
+            }
+        } else if (type == 4) {
+            if (!isLeft) {
+                if (sprite[8] == null) {
+                    return;
+                }
+                canvas.drawBitmap(sprite[8].getBitmap(), frameToDraw, whereToDraw, null);
+            } else {
+                if (sprite[9] == null) {
+                    return;
+                }
+                canvas.drawBitmap(sprite[9].getBitmap(), frameToDraw, whereToDraw, null);
             }
         }
     }

@@ -88,12 +88,12 @@ class BackGround {
                 canvas.drawBitmap(img.getBitmap(), 0, 0, null);
                 return;
             }
-            System.out.println("POS " + x + " " + lvlPos);
+            //System.out.println("POS " + x + " " + lvlPos);
             // decrement the far background
             if (lvlPos > 0)
-                x -= 1;
+                x -= 2;
             else if (lvlPos < 0)
-                x += 1;
+                x += 2;
             // calculate the wrap factor for matching image draw
             int newFarX = img.getBitmap().getWidth() - (-x);
             // if we have scrolled all the way, reset to start

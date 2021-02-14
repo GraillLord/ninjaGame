@@ -159,32 +159,30 @@ class Character {
     // déplace la chr en détectant les collisions avec les bords de l'écran
     public void moveWithCollisionDetection() {
         // on incrémente les coordonnées X et Y
-        if(isJumping() && !isOnGround()) {
+        if(isJumping()) {
             if(framejump < 8)
                 y-=speedY*20;
-            else
-                y+=speedY*20;
         }
         if(!isLeveling && !death) {
             if((isRuning() && !isAttacking1() && !isAttacking2() && !isAttacking3() && !isAttacking4())
                     || (isRuning() && isJumping())){
                 if(isLeft)
-                    x-=speedX*4;
+                    x-=speedX*6;
                 else
-                    x+=speedX*4;
-                if(y > currentY)
+                    x+=speedX*6;
+                /*if(y > currentY)
                     y-=speedY*2;
                 else if(y < currentY)
-                    y+=speedY*2;
+                    y+=speedY*2;*/
             }
         }
         else if (!death){
             if((isRuning() && !isAttacking1() && !isAttacking2() && !isAttacking3() && !isAttacking4())
                     || (isRuning() && isJumping())){
                 if(isLeft)
-                    lvlPos-=speedX*4;
+                    lvlPos-=speedX*6;
                 else
-                    lvlPos+=speedX*4;
+                    lvlPos+=speedX*6;
             }
         }
 

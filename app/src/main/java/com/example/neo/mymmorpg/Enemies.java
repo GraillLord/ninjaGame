@@ -19,7 +19,7 @@ import static com.example.neo.mymmorpg.MainActivity.height;
 import static com.example.neo.mymmorpg.MainActivity.width;
 
 class Enemies extends Character {
-    private BitmapDrawable[] sprite = new BitmapDrawable[8];
+    private BitmapDrawable[] sprite = new BitmapDrawable[10];
     private int x, y;
     private int foeW, foeH;
     public boolean isLeft = false;
@@ -27,15 +27,16 @@ class Enemies extends Character {
     private boolean run = false;
     private boolean jump = false;
     private boolean atk = false;
-    private boolean ground = false;
+    private boolean ground = true;
     public boolean death = false;
     private int life;
+    private int type;
 
     // A rectangle to define an area of the sprite sheet that represents 1 frame
     private Rect frameToDraw = new Rect(0, 0, foeW, foeH);
 
     // A rect that defines an area of the screen on which to draw
-    private RectF whereToDraw = new RectF(x, y, x + foeW, y +foeH);
+    private RectF whereToDraw = new RectF(x, y, x + foeW, y + foeH);
 
     private static final int INCREMENT = 5;
     public int speedX=INCREMENT, speedY=INCREMENT;
@@ -43,11 +44,12 @@ class Enemies extends Character {
     // contexte de l'application Android
     private final Context mContext;
 
-    public Enemies(final Context c, int index) {
+    public Enemies(final Context c, int type) {
         super(c);
-        x=width/20; y=height/2+(index*height/4); // position de départ
+        x=width/20; y=height/2-(height/10); // position de départ
         mContext=c; // sauvegarde du contexte
         life = 100;
+        this.type = type;
     }
 
     public void gainLife(int amount) {
@@ -137,73 +139,95 @@ class Enemies extends Character {
     }
 
     void draw(Canvas canvas) {
-        for (int i=0; i<8; i++) {
+        for (int i=0; i<10; i++) {
             if (sprite[i] == null)
                 sprite[i] = taskFoe[i/2].getBitmapDrawable()[i&1];
         }
-        //dessine
-        frameToDraw.set((int)(isLeft ? 9-frame : frame) * foeW, 0,
-                (int)((isLeft ? 9-frame : frame) * foeW) + foeW, foeH);
-        whereToDraw.set((int)x, y, (int)x + foeW, y + foeH);
-
-        if (life <= 0) {
-            if (death) frame4 = 11;
-            frameToDraw.set((int)(isLeft ? 11-frame4 : frame4) * foeW, 0,
-                    (int)((isLeft ? 11-frame4 : frame4) * foeW) + foeW, foeH);
-            whereToDraw.set((int)x - foeW*5/8, y, (int)x + foeW*5/8,y + foeH);
-            if(!isLeft) {
-                if(sprite[6] == null) {return;}
-                canvas.drawBitmap(sprite[6].getBitmap(), frameToDraw, whereToDraw,null);
-            }
-            else {
-                if(sprite[7] == null) {return;}
-                canvas.drawBitmap(sprite[7].getBitmap(), frameToDraw, whereToDraw,null);
-            }
-        }
-        else if (isRuning()) {
-            if(!isLeft) {
-                if(sprite[0] == null) {return;}
-                canvas.drawBitmap(sprite[0].getBitmap(), frameToDraw, whereToDraw, null);
-            }
-            else {
-                if(sprite[1] == null) {return;}
-                canvas.drawBitmap(sprite[1].getBitmap(), frameToDraw, whereToDraw, null);
-            }
-        }
-        else if(isMoving()){
+        //dessine zombies
+        if (type == 0) {
             frameToDraw.set((int)(isLeft ? 9-frame : frame) * foeW, 0,
                     (int)((isLeft ? 9-frame : frame) * foeW) + foeW, foeH);
-            if(!isLeft) {
-                if(sprite[2] == null) {return;}
-                canvas.drawBitmap(sprite[2].getBitmap(), frameToDraw, whereToDraw, null);
+            whereToDraw.set((int)x, y, (int)x + foeW, y + foeH);
+
+            if (life <= 0) {
+                if (death) frame4 = 11;
+                frameToDraw.set((int)(isLeft ? 11-frame4 : frame4) * foeW, 0,
+                        (int)((isLeft ? 11-frame4 : frame4) * foeW) + foeW, foeH);
+                whereToDraw.set((int)x - foeW*5/8, y, (int)x + foeW*5/8,y + foeH);
+                if(!isLeft) {
+                    if(sprite[6] == null) {return;}
+                    canvas.drawBitmap(sprite[6].getBitmap(), frameToDraw, whereToDraw,null);
+                }
+                else {
+                    if(sprite[7] == null) {return;}
+                    canvas.drawBitmap(sprite[7].getBitmap(), frameToDraw, whereToDraw,null);
+                }
+            }
+            else if (isRuning()) {
+                if(!isLeft) {
+                    if(sprite[0] == null) {return;}
+                    canvas.drawBitmap(sprite[0].getBitmap(), frameToDraw, whereToDraw, null);
+                }
+                else {
+                    if(sprite[1] == null) {return;}
+                    canvas.drawBitmap(sprite[1].getBitmap(), frameToDraw, whereToDraw, null);
+                }
+            }
+            else if(isMoving()){
+                frameToDraw.set((int)(isLeft ? 9-frame : frame) * foeW, 0,
+                        (int)((isLeft ? 9-frame : frame) * foeW) + foeW, foeH);
+                if(!isLeft) {
+                    if(sprite[2] == null) {return;}
+                    canvas.drawBitmap(sprite[2].getBitmap(), frameToDraw, whereToDraw, null);
+                }
+                else {
+                    if(sprite[3] == null) {return;}
+                    canvas.drawBitmap(sprite[3].getBitmap(), frameToDraw, whereToDraw, null);
+                }
+            }
+            else if(isAttacking()) {
+                frameToDraw.set((int)(isLeft ? 7-frame3 : frame3) * foeW, 0,
+                        (int)((isLeft ? 7-frame3 : frame3) * foeW) + foeW, foeH);
+                if(!isLeft) {
+                    if(sprite[4] == null) {return;}
+                    canvas.drawBitmap(sprite[4].getBitmap(), frameToDraw, whereToDraw, null);
+                }
+                else {
+                    if(sprite[5] == null) {return;}
+                    canvas.drawBitmap(sprite[5].getBitmap(), frameToDraw, whereToDraw, null);
+                }
             }
             else {
-                if(sprite[3] == null) {return;}
-                canvas.drawBitmap(sprite[3].getBitmap(), frameToDraw, whereToDraw, null);
+                frameToDraw.set((int)(isLeft ? 14-frame2 : frame2) * foeW, 0,
+                        (int)((isLeft ? 14-frame2 : frame2) * foeW) + foeW, foeH);
+                if(!isLeft) {
+                    if(sprite[0] == null) {return;}
+                    canvas.drawBitmap(sprite[0].getBitmap(), frameToDraw, whereToDraw, null);
+                }
+                else {
+                    if(sprite[1] == null) {return;}
+                    canvas.drawBitmap(sprite[1].getBitmap(), frameToDraw, whereToDraw, null);
+                }
             }
         }
-        else if(isAttacking()) {
-            frameToDraw.set((int)(isLeft ? 7-frame3 : frame3) * foeW, 0,
-                    (int)((isLeft ? 7-frame3 : frame3) * foeW) + foeW, foeH);
-            if(!isLeft) {
-                if(sprite[4] == null) {return;}
-                canvas.drawBitmap(sprite[4].getBitmap(), frameToDraw, whereToDraw, null);
-            }
-            else {
-                if(sprite[5] == null) {return;}
-                canvas.drawBitmap(sprite[5].getBitmap(), frameToDraw, whereToDraw, null);
-            }
-        }
-        else {
-            frameToDraw.set((int)(isLeft ? 14-frame2 : frame2) * foeW, 0,
-                    (int)((isLeft ? 14-frame2 : frame2) * foeW) + foeW, foeH);
-            if(!isLeft) {
-                if(sprite[0] == null) {return;}
-                canvas.drawBitmap(sprite[0].getBitmap(), frameToDraw, whereToDraw, null);
-            }
-            else {
-                if(sprite[1] == null) {return;}
-                canvas.drawBitmap(sprite[1].getBitmap(), frameToDraw, whereToDraw, null);
+        //dessine birds
+        if (type == 1) {
+            frameToDraw.set((int) (isLeft ? 9 - frame : frame) * foeW, 0,
+                    (int) ((isLeft ? 9 - frame : frame) * foeW) + foeW, foeH);
+            whereToDraw.set((int) x, y, (int) x + foeW, y + foeH);
+
+            if (isMoving()) {
+                if (!isLeft) {
+                    if (sprite[8] == null) {
+                        return;
+                    }
+                    canvas.drawBitmap(sprite[8].getBitmap(), frameToDraw, whereToDraw, null);
+                } else {
+                    if (sprite[9] == null) {
+                        return;
+                    }
+                    canvas.drawBitmap(sprite[9].getBitmap(), frameToDraw, whereToDraw, null);
+                }
             }
         }
     }

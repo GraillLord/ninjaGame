@@ -26,22 +26,32 @@ public class Battle extends GameView {
     private Enemies[] enemies;
     private Cursor cursor;
     private boolean atkLapse = false;
-    private int origin = (height / 2 + height / 20);
+    private int origin = -height/3;
 
     //level disign
-    //todo
-    //private int[] lvlFoes = { 6 };
-
-    private int[][] foes_coords = {
-            {6, 12, 13, 15, 17, 20},
-            {10, 15, 20, 25, 30, 35, 40, 45, 50}
+    private int[][][] foes_coords = {
+            /*lvl1*/
+            {{0,0}, {0,12}, {1,13}, {1,15}, {0,17}, {0,20},
+            {0,22}, {0,25}, {0,28}, {0,33}, {1,45}, {1,47}},
+            /*lvl2*/
+            {{0,10}, {0,15}, {0,20}, {0,25}, {0,30}, {0,35}, {0,40}, {0,45}, {0,50}}
     };
 
     private double [][][] platforms_coords = {
-            {       /*ground*/      {0,0.1,1.3},{1,0.5,1.3},{2,0.9,1.3},
-                    /*platforms*/   {3,1,0.8},{3,2,0.8},{3,3,0.8}},
-            {       /*ground*/      {0,0,0},{1,1,0},{1,2,0},
-                    /*plateforms*/  {3,1,1},{3,1.5,1},{3,2,1},{3,2.5,0.8},{3,3,0.6},{3,3.5,0.5}}
+            /*lvl1*/
+            {       /*ground*/      {0,0.1,1.3},{1,0.4,1.3},{2,0.7,1.3},/*vide*/{0,1.0,1.3},{1,1.3,1.3},{2,1.6,1.3},
+                                    /*vide*/{0,2.2,1.3},{1,2.5,1.3},{2,2.8,1.3},/*vide*/{0,3.4,1.3},
+                                    {1,3.7,1.3},{2,4.0,1.3},/*vide*/{0,4.6,1.3},{1,4.9,1.3},{1,5.2,1.3},
+                                    {1,5.5,1.3},{1,5.8,1.3},{1,6.1,1.3},{1,6.4,1.3},{1,6.7,1.3},{1,7.0,1.3},
+                                    {1,7.3,1.3},{1,7.6,1.3},{1,7.9,1.3},{1,8.2,1.3},{1,8.5,1.3},{1,8.8,1.3},
+                                    {1,9.1,1.3},{1,9.4,1.3},{1,9.7,1.3},{1,10,1.3},{1,10.3,1.3},{1,10.6,1.3},
+                                    {1,10.9,1.3},{1,11.2,1.3},{1,11.5,1.3},{1,11.8,1.3},{1,12.1,1.3},{1,12.4,1.3},
+                                    {1,12.7,1.3},{2,13,1.3},
+                    /*platforms*/   {3,1,0.8},{3,2,0.8},{3,3,0.8},
+                    {4,13,1}},
+            /*lvl2*/
+            {       /*ground*/      {0,0.1,1.3},{1,0.5,1.3},{1,0.9,1.3},{1,1.3,1.3},
+                    /*plateforms*/  {3,1,0.8},{3,1.5,0.8},{3,2,0.8},{3,2.5,0.8},{3,3,0.6},{3,3.5,0.5},{4,20,1.3}}
     };
 
     // création de la surface de dessin
@@ -65,7 +75,7 @@ public class Battle extends GameView {
         // position de départ
         //if(chr.id == playerID, else bots ???)
         chr.setX(width/2-width/12);
-        chr.setY(height/2+height/20);
+        chr.setY(origin);
         if (lvlIndex == 0)    backGround = new BackGround(this.getContext(), R.drawable.bg_lvl1);
         if (lvlIndex == 1)    backGround = new BackGround(this.getContext(), R.drawable.bg_lvl2);
         kunai = new ThrownObjects(this.getContext(), R.drawable.kunai);
@@ -77,15 +87,12 @@ public class Battle extends GameView {
             platforms[i] = new Platforms(this.getContext(), platforms_coords[lvlIndex][i][0]);
             platforms[i].setX(width/2*platforms_coords[lvlIndex][i][1]);
             platforms[i].setY(height/2*platforms_coords[lvlIndex][i][2]);
-            //System.out.println(platforms[i].getX() + "  plate " + platforms[i].getY());
         }
 
         for(int i=0; i<enemies.length; i++) {
-            enemies[i] = new Enemies(this.getContext(), i);
-            //enemies[0].setY(height/2-height/5);
-            enemies[i].setX(width/2*foes_coords[lvlIndex][i]);
-            enemies[i].setY(height/2+height/20+5);
-            //System.out.println(enemies[i].getX() + "  ene " + enemies[i].getY());
+            enemies[i] = new Enemies(this.getContext(), foes_coords[lvlIndex][i][0]);
+            enemies[i].setX(width/2*foes_coords[lvlIndex][i][1]);
+            enemies[i].setY(-height/3);
         }
 
         cursor = new Cursor(this.getContext());
@@ -100,13 +107,12 @@ public class Battle extends GameView {
 
         //frames
         if (framejump >= 10) {
-            if (chr.isJumping()) {
+            if (chr.isJumping())
                 chr.setJump(false);
-            }
-            origin = gravity(origin, chr);
-            if (!chr.death) chr.setY(origin);
+            origin = gravity(chr, 1);
             framejump = 0;
         }
+        //System.out.println("PERSO X = " + lvlPos);
         if(frame >= 10) {
             if (chr.getLife() <= 0) {
                 chr.death = true;
@@ -169,7 +175,7 @@ public class Battle extends GameView {
             for (Enemies enemy : enemies) {
                 if (enemy.getLife() <= 0) {
                     enemy.death = true;
-                    enemy.setY(height/2+height/20+30);
+                    enemy.setY(gravity(enemy, 2));
                 }
             }
         }
@@ -195,7 +201,7 @@ public class Battle extends GameView {
         cursor.draw(canvas);
 
         for (Enemies enemy : enemies) {
-            enemy.setY(gravity(enemy.getY(), enemy));
+            enemy.setY(gravity(enemy, 2));
             if (!enemy.death) {
                 if (chr.getY() <= enemy.getY() + enemy.getFoeH()/3
                         && chr.getY() >= enemy.getY() - enemy.getFoeH()/3
@@ -204,11 +210,13 @@ public class Battle extends GameView {
                     enemy.setMove(false);
                     if (!atkLapse)
                         enemy.setAttacking(true);
-                } else if (chr.getX() <= enemy.getX()) {
+                } else if (chr.getX() <= enemy.getX()
+                        && Math.abs(chr.getX() - enemy.getX()) <= 1000 && enemy.isOnGround()) {
                     enemy.isLeft = true;
                     enemy.setMove(true);
                     enemy.setX(enemy.getX() - 10);
-                } else if (chr.getX() >= enemy.getX()) {
+                } else if (chr.getX() >= enemy.getX()
+                        && Math.abs(chr.getX() - enemy.getX()) <= 1000 && enemy.isOnGround()) {
                     enemy.isLeft = false;
                     enemy.setMove(true);
                     enemy.setX(enemy.getX() + 10);
@@ -220,7 +228,7 @@ public class Battle extends GameView {
 
         lvlPos = 0;
         if (!chr.death && !chr.isJumping()) {
-            origin = gravity(origin, chr);
+            origin = gravity(chr, 1);
             chr.setY(origin);
         }
 
@@ -233,30 +241,53 @@ public class Battle extends GameView {
 
     // Gère les touchés sur l'écran
 
-    private int gravity(int heights, Character obj) {
+    private int gravity(Character obj, int type) {
+        //System.out.println("GG1 " + enemies[0].getX());
+        //System.out.println("GG2 " + platforms[5].getX());
+
         for (Platforms platform : platforms) {
-            if ((platform.getX() >= 50 && platform.getX() <= 250)
-                    && (obj.getY() >= platform.getY() - 350)
-                    && (obj.getY() <= platform.getY())) {
-                if (framejump > 8 && obj.getY() >= platform.getY() - 350)
+            if (type == 1) {
+                if ((platform.getX() >= 50 && platform.getX() <= 250)
+                        && (obj.getY() >= platform.getY() - 350)
+                        && (obj.getY() <= platform.getY() - 250))
+                {
                     obj.setGround(true);
-                heights = (int) platform.getY() - 300;
-                framegravity = 0;
-                break;
-            }
-            if (!obj.isJumping()) {
-                if(heights < (height))
-                    if ((platform.getX() >= 50 && platform.getX() <= 250)
-                            && (platform.getY() - 300 - heights) < 0)
-                        framegravity = 0;
-                    else
-                        heights +=  framegravity += 2;
+                    obj.setY((int) platform.getY() - 300);
+                    break;
+                }
                 else
-                    framegravity = 0;
+                    obj.setGround(false);
+            }
+            else if (type == 2) {
+                //System.out.println("GG " + enemies[0].getX());
+                //System.out.println("GG1 " + platforms[2].getX());
+                //System.out.println("GG1 " + platforms[3].getX());
+                //System.out.println("GG3 " + Math.abs(enemies[0].getX() - platforms[2].getX()));
+                //System.out.println("GG5 " + Math.abs(enemies[1].getX() - platforms[5].getX()));
+                if (obj.getX() - platform.getX() >= -50 && obj.getX() - platform.getX() <= 50
+                        && (obj.getY() >= platform.getY() - 350)
+                        && (obj.getY() <= platform.getY() - 250))
+                {
+                    obj.setGround(true);
+                    obj.setY((int) platform.getY() - 300);
+                    break;
+                }
+                else
+                    obj.setGround(false);
             }
         }
+        if (!obj.isOnGround()) {
+            if (framegravity < 100) framegravity+=20;
+            obj.setY(obj.getY() + (type == 1 ? framegravity : 50));
+        }
+        else if(type == 1)
+            framegravity = 0;
+        if (obj.getY() >= height*3/4) {
+            obj.loseLife(100);
+            obj.setY(height);
+        }
 
-        return heights;
+        return obj.getY();
     }
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -277,7 +308,6 @@ public class Battle extends GameView {
                                 currentY <= (cursor.getY()+cursor.getY()/15)+cursor.getCursH()/2) {
                             framejump = 0;
                             chr.setJump(true);
-                            chr.setGround(false);
                         }
                         else if(currentX >= cursor.getX()*12 &&
                                 currentX <= cursor.getX()*12+cursor.getCursW()/2 &&
@@ -339,7 +369,6 @@ public class Battle extends GameView {
                                     event.getY(i) <= (cursor.getY()+cursor.getY()/15)+cursor.getCursH()/2) {
                                 framejump = 0;
                                 chr.setJump(true);
-                                chr.setGround(false);
                             }
                             else if(event.getX(i) >= cursor.getX()*12 &&
                                     event.getX(i) <= cursor.getX()*12+cursor.getCursW()/2 &&
@@ -420,6 +449,8 @@ public class Battle extends GameView {
         taskPlate[1] = LoadGameImages(R.drawable.grd2, 10, platforms[0].getPlW(), platforms[0].getPlH());
         taskPlate[2] = LoadGameImages(R.drawable.grd3, 10, platforms[0].getPlW(), platforms[0].getPlH());
         taskPlate[3] = LoadGameImages(R.drawable.platf, 10, platforms[0].getPlW(), platforms[0].getPlH());
+        //flags
+        taskPlate[4] = LoadGameImages(R.drawable.finish_flag, 10, platforms[0].getPlW(), platforms[0].getPlH());
         /*Charaters*/
         //idle
         task[0] = LoadGameImages(R.drawable.idle, 10, chr.getchrW(), chr.getchrH());
@@ -450,6 +481,8 @@ public class Battle extends GameView {
         taskFoe[2] = LoadGameImages(R.drawable.zmatk, 8, enemies[0].getFoeW(), enemies[0].getFoeH());
         //death
         taskFoe[3] = LoadGameImages(R.drawable.zmdead, 12, enemies[0].getFoeW(), enemies[0].getFoeH());
+        //bird's moving
+        taskFoe[4] = LoadGameImages(R.drawable.flying_bird, 10, enemies[0].getFoeW(), enemies[0].getFoeH());
     }
 
 } // class Battle
