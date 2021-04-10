@@ -34,6 +34,7 @@ class Character {
     public boolean isLeft = false; // 'true' si l'on fait commencer le perso vers la droite
     public boolean death = false;
     protected boolean ground = true;
+    protected int baseJump;
     private int life;
 
     // A rectangle to define an area of the sprite sheet that represents 1 frame
@@ -114,6 +115,8 @@ class Character {
 
     protected void setGround(boolean ground) { this.ground = ground; }
 
+    protected void setBaseJump(int y) { this.baseJump = y; }
+
     // redimensionnement de l'image selon la largeur/hauteur de l'écran passés en paramètre
     void resize(int wScreen, int hScreen) {
         // wScreen et hScreen sont la largeur et la hauteur de l'écran en pixel
@@ -156,6 +159,8 @@ class Character {
 
     public int getLife() { return life; }
 
+    public int getBaseJump() { return baseJump; }
+
     // déplace la chr en détectant les collisions avec les bords de l'écran
     public void moveWithCollisionDetection() {
         // on incrémente les coordonnées X et Y
@@ -163,27 +168,28 @@ class Character {
             if(framejump < 8)
                 y-=speedY*20;
         }
-        if(!isLeveling && !death) {
-            if((isRuning() && !isAttacking1() && !isAttacking2() && !isAttacking3() && !isAttacking4())
-                    || (isRuning() && isJumping())){
+        if(!death && (isRuning() && !isAttacking1()
+                && !isAttacking2()
+                && !isAttacking3()
+                && !isAttacking4())
+                || (isRuning() && isJumping())) {
+
+            if(isLeveling) {
                 if(isLeft)
-                    x-=speedX*6;
+                    lvlPos -= speedX * 3;
                 else
-                    x+=speedX*6;
-                /*if(y > currentY)
-                    y-=speedY*2;
-                else if(y < currentY)
-                    y+=speedY*2;*/
+                    lvlPos += speedX * 3;
             }
-        }
-        else if (!death){
-            if((isRuning() && !isAttacking1() && !isAttacking2() && !isAttacking3() && !isAttacking4())
-                    || (isRuning() && isJumping())){
-                if(isLeft)
-                    lvlPos-=speedX*6;
+            else {
+                if (isLeft)
+                    x -= speedX * 3;
                 else
-                    lvlPos+=speedX*6;
+                    x += speedX * 3;
             }
+            if(y > currentY)
+                y -= speedY * 3;
+            else if(y < currentY)
+                y += speedY * 3;
         }
 
         // si on ne doit pas déplacer la chr (lorsqu'elle est sous le doigt du joueur)

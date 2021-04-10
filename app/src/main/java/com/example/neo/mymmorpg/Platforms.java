@@ -111,10 +111,12 @@ class Platforms {
         }
         //dessine
         frameToDraw.set(0, 0, plW * 10, plH);
-        whereToDraw.set((float) x, (float) y, (float) x + plW, (float) y + plH);
+        if (type != 0)
+            whereToDraw.set((float) x, (float) y, (float) x + plW, (float) y + plH);
 
         //groud1
         if (type == 0) {
+            whereToDraw.set((float) x, (float) y, (float) x + plW*8, (float) y + plH*8);
             if (!isLeft) {
                 if (sprite[0] == null) {
                     return;
